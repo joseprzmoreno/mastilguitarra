@@ -1,0 +1,321 @@
+<html>
+<head>
+  <style>
+  *
+  {
+    font-family: Arial;
+  }
+  .boton
+  {
+    width: 80px;
+    height: 60px;
+    text-align: center;
+  }
+  td
+  {
+    font-size: 14px;
+    color: black;
+    font-family: Arial;
+  }
+  .boton-c
+  {
+    background-color: red;
+  }
+  .boton-cs
+  {
+    background-color: #f56c42;
+  }
+  .boton-d
+  {
+    background-color: orange;
+  }
+  .boton-ds
+  {
+    background-color: #f5c833;
+  }
+  .boton-e
+  {
+    background-color: yellow;
+  }
+  .boton-f
+  {
+    background-color: green;
+  }
+  .boton-fs
+  {
+    background-color: #08cfb4;
+  }
+  .boton-g
+  {
+    background-color: lightblue;
+  }
+  .boton-gs
+  {
+    background-color: #7297ed;
+  }
+  .boton-a
+  {
+    background-color: blue;
+  }
+  .boton-as
+  {
+    background-color: #5735f0;
+  }
+  .boton-b
+  {
+    background-color: purple;
+  }
+  #principal
+  {
+    height: 1200px;
+    width: 800px;
+    border: 1px solid red;
+  }
+  #izq
+  {
+    display: inline-block;
+    height: 1100px;
+    width: 300px;
+  }
+  #der
+  {
+    display: inline-block;
+    height: 1100px;
+    width: 1000px;
+  }
+
+
+  </style>
+</head>
+<body onload="dibujarMastil()">
+<h1>Mástil guitarra y notas</h1>
+<table>
+  <tr>
+    <td id="izq"><canvas width="150" height="1000" id="mycanvas"></canvas></td>
+  <td id="der">
+    <script>
+    var nombresNotas = [['c','do'],['c#','do#','db','reb'],['d', 're'],['d#','re#','eb','mib'],
+    ['e','mi'],['f','fa'],['f#','fa#','gb','solb'],['g','sol'],
+    ['g#','sol#','ab','lab'],['a','la'],['a#','la#','bb','sib'],['b','si']];
+    var nombresBotones = ['c','cs','d','ds','e','f','fs','g','gs','a','as','b'];
+    var escalas = [2,3,4,5,6];
+    for (var i = 0; i < escalas.length; i++)
+    {
+      for (var j = 0; j < 12; j++)
+      {
+        document.write("<button class='boton boton-" + nombresBotones[j] + " id='btn-" +
+        nombresBotones[j] + escalas[i] +
+        " onclick='dibujarNota(\"" + nombresBotones[j].toUpperCase() + "\",\""+
+        escalas[i] + "\")'");
+
+        if ((escalas[i]==2 && j<=3) || (escalas[i]==6 && j>4))
+        {
+          document.write(" disabled style='background-color:grey' ");
+        }
+
+        document.write(" >");
+        if (nombresNotas[j].length == 2)
+        {
+          document.write("<table class='tabb tabb2'><tr><td>" + nombresNotas[j][0] + escalas[i] +
+          "</td></tr><tr><td>" + nombresNotas[j][1] + escalas[i] + "</td></tr></table>");
+        }
+        else
+        {
+          document.write("<table class='tabb tabb4'><tr><td>" + nombresNotas[j][0] + escalas[i] +
+          "|</td><td>" + nombresNotas[j][2] + escalas[i] + "</td></tr><tr><td>" + nombresNotas[j][1] + escalas[i] +
+          "|</td><td>" + nombresNotas[j][3] + escalas[i] + "</td></tr></table>");
+        }
+        document.write("</button>");
+
+      }
+      document.write("<hr>");
+    }
+
+    </script>
+  </td></tr></table>
+</body>
+<script>
+
+var c = document.getElementById("mycanvas");
+var ctx = c.getContext("2d");
+var ancho = 15;
+var x = 20;
+var y = 20;
+var ref = 60;
+var largos = [0, ref];
+var acum = ref;
+for (var i = 1; i < 24; i++)
+{
+  ref = ref * 0.93;
+  acum += ref;
+  largos.push(Math.round(acum));
+}
+var notas =
+[
+
+  {"n":"E", "e":2, "poss":[[6,0]]},
+  {"n":"F", "e":2, "poss":[[6,1]]},
+  {"n":"FS", "e":2, "poss":[[6,2]]},
+  {"n":"G", "e":2, "poss":[[6,3]]},
+  {"n":"GS", "e":2, "poss":[[6,4]]},
+  {"n":"A", "e":2, "poss":[[6,5],[5,0]]},
+  {"n":"AS", "e":2, "poss":[[6,6],[5,1]]},
+  {"n":"B", "e":2, "poss":[[6,7],[5,2]]},
+
+  {"n":"C", "e":3, "poss":[[6,8],[5,3]]},
+  {"n":"CS", "e":3, "poss":[[6,9],[5,4]]},
+  {"n":"D", "e":3, "poss":[[6,10],[5,5],[4,0]]},
+  {"n":"DS", "e":3, "poss":[[6,11],[5,6],[4,1]]},
+  {"n":"E", "e":3, "poss":[[6,12],[5,7],[4,2]]},
+  {"n":"F", "e":3, "poss":[[6,13],[5,8],[4,3]]},
+  {"n":"FS", "e":3, "poss":[[6,14],[5,9],[4,4]]},
+  {"n":"G", "e":3, "poss":[[6,15],[5,10],[4,5],[3,0]]},
+  {"n":"GS", "e":3, "poss":[[6,16],[5,11],[4,6],[3,1]]},
+  {"n":"A", "e":3, "poss":[[6,17],[5,12],[4,7],[3,2]]},
+  {"n":"AS", "e":3, "poss":[[6,18],[5,13],[4,8],[3,3]]},
+  {"n":"B", "e":3, "poss":[[6,19],[5,14],[4,9],[3,4],[2,0]]},
+
+  {"n":"C", "e":4, "poss":[[6,20],[5,15],[4,10],[3,5],[2,1]]},
+  {"n":"CS", "e":4, "poss":[[6,21],[5,16],[4,11],[3,6],[2,2]]},
+  {"n":"D", "e":4, "poss":[[6,22],[5,17],[4,12],[3,7],[2,3]]},
+  {"n":"DS", "e":4, "poss":[[6,23],[5,18],[4,13],[3,8],[2,4]]},
+  {"n":"E", "e":4, "poss":[[6,24],[5,19],[4,14],[3,9],[2,5],[1,0]]},
+  {"n":"F", "e":4, "poss":[[5,20],[4,15],[3,10],[2,6],[1,1]]},
+  {"n":"FS","e":4, "poss":[[5,21],[4,16],[3,11],[2,7],[1,2]]},
+  {"n":"G", "e":4, "poss":[[5,22],[4,17],[3,12],[2,8],[1,3]]},
+  {"n":"GS", "e":4, "poss":[[5,23],[4,18],[3,13],[2,9],[1,4]]},
+  {"n":"A", "e":4, "poss":[[5,24],[4,19],[3,14],[2,10],[1,5]]},
+  {"n":"AS", "e":4, "poss":[[4,20],[3,15],[2,11],[1,6]]},
+  {"n":"B", "e":4, "poss":[[4,21],[3,16],[2,12],[1,7]]},
+
+  {"n":"C", "e":5, "poss":[[4,22],[3,17],[2,13],[1,8]]},
+  {"n":"CS", "e":5, "poss":[[4,23],[3,18],[2,14],[1,9]]},
+  {"n":"D", "e":5, "poss":[[4,24],[3,19],[2,15],[1,10]]},
+  {"n":"DS", "e":5, "poss":[[3,20],[2,16],[1,11]]},
+  {"n":"E", "e":5, "poss":[[3,21],[2,17],[1,12]]},
+  {"n":"F", "e":5, "poss":[[3,22],[2,18],[1,13]]},
+  {"n":"FS", "e":5, "poss":[[3,23],[2,19],[1,14]]},
+  {"n":"G", "e":5, "poss":[[3,24],[2,20],[1,15]]},
+  {"n":"GS", "e":5, "poss":[[2,21],[1,16]]},
+  {"n":"A", "e":5, "poss":[[2,22],[1,17]]},
+  {"n":"AS", "e":5, "poss":[[2,23],[1,18]]},
+  {"n":"B", "e":5, "poss":[[2,24],[1,19]]},
+
+  {"n":"C", "e":6, "poss":[[1,20]]},
+  {"n":"CS", "e":6, "poss":[[1,21]]},
+  {"n":"D", "e":6, "poss":[[1,22]]},
+  {"n":"DS", "e":6, "poss":[[1,23]]},
+  {"n":"E", "e":6, "poss":[[1,24]]}
+
+];
+
+function dibujarPosNota(pos)
+{
+  ctx.beginPath();
+  ctx.fillStyle = "red";
+  var center_x = ( (ancho * (6 - pos[0])) + x);
+  var center_y = y + (largos[pos[1]]) - 5;
+  var radio = 4;
+  ctx.arc(center_x, center_y, radio, 0, 2 * Math.PI);
+  ctx.fill();
+}
+
+function buscarPosiciones(nombre, escala)
+{
+  for (var i=0; i<notas.length; i++)
+  {
+    var nota = notas[i];
+    if (nota.n == nombre && nota.e == escala)
+    {
+      return nota.poss;
+    }
+  }
+}
+
+function dibujarNota(nombre, escala)
+{
+  dibujarMastil();
+  poss = buscarPosiciones(nombre, escala);
+  for (var i=0; i < poss.length; i++)
+  {
+    dibujarPosNota(poss[i]);
+  }
+}
+
+function dibujarFondoMastil()
+{
+  ctx.fillStyle = "ivory";
+  ctx.fillRect(0,0,c.width,c.height);
+  ctx.fillStyle = "black";
+  ctx.fillRect(x-2, y-2, (ancho*5)+4, (acum+4));
+}
+
+function dibujarTraste(num)
+{
+  ctx.beginPath();
+  ctx.strokeStyle = "yellow";
+  ctx.moveTo(x, y + (largos[num]));
+  ctx.lineTo(x + (ancho*5), y + (largos[num]));
+  ctx.stroke();
+}
+
+function dibujarCuerda(num)
+{
+  num = 6 - num;
+  ctx.beginPath();
+  ctx.strokeStyle = "lightgrey";
+  ctx.moveTo((ancho * num) + x, y);
+  ctx.lineTo((ancho * num) + x, y + acum);
+  ctx.stroke();
+}
+
+function dibujarPunto(numTraste)
+{
+  ctx.beginPath();
+  ctx.fillStyle = "lightgrey";
+  var center_x = x + (ancho * 2) + (ancho * 0.5);
+  var center_y = y + (largos[numTraste - 1] - ((largos[numTraste -2] - largos[numTraste - 1]) * 0.50));
+  var radio = 2;
+  ctx.arc(center_x, center_y, radio, 0, 2 * Math.PI);
+  ctx.fill();
+
+}
+
+function dibujarDosPuntos(numTraste)
+  {
+  ctx.beginPath();
+  ctx.fillStyle = "lightgrey";
+  var center_x_1 = x + (ancho) + (ancho * 0.5);
+  var center_x_2 = x + (ancho*3) + (ancho * 0.5);
+  var center_y = y + (largos[numTraste - 1] - ((largos[numTraste -2] - largos[numTraste -1]) * 0.50));
+  var radio = 2;
+  ctx.arc(center_x_1, center_y, radio, 0, 2 * Math.PI);
+  ctx.arc(center_x_2, center_y, radio, 0, 2 * Math.PI);
+  ctx.fill();
+}
+
+function dibujarMastil()
+{
+  dibujarFondoMastil();
+  for (var i = 0; i<=24; i++)
+  {
+    dibujarTraste(i);
+  }
+  for (var i = 1; i<=6; i++)
+  {
+    dibujarCuerda(i);
+  }
+  dibujarPunto(3);
+  dibujarPunto(5);
+  dibujarPunto(7);
+  dibujarPunto(9);
+  dibujarPunto(15);
+  dibujarPunto(17);
+  dibujarPunto(19);
+  dibujarPunto(21);
+  dibujarDosPuntos(12);
+  dibujarDosPuntos(24);
+}
+
+</script>
+</html>
